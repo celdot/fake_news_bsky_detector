@@ -28,6 +28,18 @@ def search_posts(query, limit=100):
     data = response.json()
     return data
 
+def get_post_info(dataset, post, news, query):
+    profile = get_profile(post["author"]["handle"])
+    dataset["post_uri"].append(post["uri"])
+    dataset["post_cid"].append(post["cid"])
+    dataset["date"].append(post["record"]["createdAt"])
+    dataset["news_id"].append(news[news["title"] == query]["id"].values[0])
+    dataset["like_count"].append(post["likeCount"])
+    dataset["repost_count"].append(post["repostCount"])
+    dataset["user_name"].append(post["author"]["handle"])
+    dataset["follower_count"].append(profile["followersCount"])
+    dataset["follows_count"].append(profile["followsCount"])
+
 def add_posts(news, limit=100):
     
     dataset = {"post_uri": [],
@@ -45,20 +57,27 @@ def add_posts(news, limit=100):
     for query in tqdm(news["title"]):
         posts = search_posts(query, limit)
         for post in posts["posts"]:
-            profile = get_profile(post["author"]["handle"])
-            dataset["post_uri"].append(post["uri"])
-            dataset["post_cid"].append(post["cid"])
-            dataset["date"].append(post["record"]["createdAt"])
-            dataset["news_id"].append(news[news["title"] == query]["id"].values[0])
-            dataset["like_count"].append(post["likeCount"])
-            dataset["repost_count"].append(post["repostCount"])
-            dataset["user_name"].append(post["author"]["handle"])
-            dataset["follower_count"].append(profile["followersCount"])
-            dataset["follows_count"].append(profile["followsCount"])
-            
+            try:
+                get_post_info(dataset, post, news, query)
+            except KeyError: 
+                pass
+                    
     dataframe = pd.DataFrame(dataset, columns=["post_uri", "post_cid", "type", "date", "news_id", "like_count", "repost_count", "user_name", "follower_count", "follows_count"])
             
     return dataframe
+
+def get_repost_info(dataset, user, query, posts_dataset):
+    profile = get_profile(user["handle"])
+    
+    dataset["post_uri"].append(posts_dataset[posts_dataset["post_uri"] == query]["post_uri"].values[0])
+    dataset["post_cid"].append(posts_dataset[posts_dataset["post_uri"] == query]["post_cid"].values[0])
+    dataset["retweet_date"].append(posts_dataset[posts_dataset["post_uri"] == query]["date"].values[0])
+    dataset["news_id"].append(posts_dataset[posts_dataset["post_uri"] == query]["news_id"].values[0])
+    dataset["like_count"].append(posts_dataset[posts_dataset["post_uri"] == query]["like_count"].values[0])
+    dataset["repost_count"].append(posts_dataset[posts_dataset["post_uri"] == query]["repost_count"].values[0])
+    dataset["user_name"].append(user["handle"])
+    dataset["follower_count"].append(profile["followersCount"])
+    dataset["follows_count"].append(profile["followsCount"])
 
 def add_reposts(posts_dataset, limit=100):
     
@@ -78,17 +97,10 @@ def add_reposts(posts_dataset, limit=100):
     for query in tqdm(posts_dataset["post_uri"]):
         reposts = get_reposts(query, limit)
         for user in reposts["repostedBy"]:
-            profile = get_profile(user["handle"])
-            
-            dataset["post_uri"].append(posts_dataset[posts_dataset["post_uri"] == query]["post_uri"].values[0])
-            dataset["post_cid"].append(posts_dataset[posts_dataset["post_uri"] == query]["post_cid"].values[0])
-            dataset["retweet_date"].append(posts_dataset[posts_dataset["post_uri"] == query]["date"].values[0])
-            dataset["news_id"].append(posts_dataset[posts_dataset["post_uri"] == query]["news_id"].values[0])
-            dataset["like_count"].append(posts_dataset[posts_dataset["post_uri"] == query]["like_count"].values[0])
-            dataset["repost_count"].append(posts_dataset[posts_dataset["post_uri"] == query]["repost_count"].values[0])
-            dataset["user_name"].append(user["handle"])
-            dataset["follower_count"].append(profile["followersCount"])
-            dataset["follows_count"].append(profile["followsCount"])
+            try:
+                get_repost_info(dataset, user, query, posts_dataset)
+            except KeyError: 
+                pass
             
     dataframe = pd.DataFrame(dataset, columns=["post_uri", "post_cid", "type", "retweet_date", "news_id", "like_count", "repost_count", "user_name", "follower_count", "follows_count"])
             
