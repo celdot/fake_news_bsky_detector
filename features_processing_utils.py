@@ -95,11 +95,12 @@ def add_reposts(posts_dataset, limit=100):
     
     
     for query in tqdm(posts_dataset["post_uri"]):
+        reposts = get_reposts(query, limit)
         try:
-            reposts = get_reposts(query, limit)
+            reposts_list = reposts["repostedBy"]
         except KeyError:
-            reposts = {"repostedBy": []}
-        for user in reposts["repostedBy"]:
+            reposts_list = []
+        for user in reposts_list:
             try:
                 get_repost_info(dataset, user, query, posts_dataset)
             except KeyError: 
