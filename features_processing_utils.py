@@ -14,17 +14,17 @@ def get_post(uri):
     return data
 
 def get_reposts(uri, limit=100):
-    response = requests.get("https://public.api.bsky.app/xrpc/app.bsky.feed.getRepostedBy?uri=" + uri + "&limit=" + str(limit))
+    response = requests.get(f"https://public.api.bsky.app/xrpc/app.bsky.feed.getReposts?uri={uri}&limit={limit}")
     data = response.json()
     return data
 
 def get_feed(username, limit=100):
-    response = requests.get("https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor=" + username + "&limit=" + str(limit))
+    response = requests.get(f"https://public.api.bsky.app/xrpc/app.bsky.feed.getAuthorFeed?actor={username}&limit={limit}")
     data = response.json()
     return data
 
 def search_posts(query, limit=100):
-    response = requests.get("https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?q=" + query + "&limit=" + str(limit))
+    response = requests.get(f"https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?query={query}&limit={limit}")
     data = response.json()
     return data
 
