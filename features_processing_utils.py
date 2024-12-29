@@ -191,3 +191,10 @@ def get_features(dataframe, label):
                                                 
     return features_df
 
+def complete_processing(source, label, posts_name, feature_name, start, end):
+    posts = create_dataset(source[start:end])
+    posts.to_csv("data/" + posts_name, index=False)
+    features = get_features(posts, label)
+    features.to_csv("data/" + feature_name, index=False)
+    
+    return features
