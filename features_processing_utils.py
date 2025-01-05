@@ -53,7 +53,7 @@ def add_posts(news, limit=100):
                 "follower_count": [],
                 "follows_count": [],
                 }
-    
+
     for query in tqdm(news["title"]):
         posts = search_posts(query, limit)
         try:
@@ -138,7 +138,7 @@ def calculate_repost_post_counts(group):
     
     return pd.Series({"repost_count": repost_count, "post_count": post_count})
 
-def get_features(dataframe, label):
+def get_features(dataframe, label, query=False):
     news_df = dataframe.groupby("news_id")
     
     features_df = pd.DataFrame()
@@ -167,7 +167,9 @@ def get_features(dataframe, label):
                                 (features_df["repost total"] + features_df["post total"])).fillna(0)
                                                 
     features_df["average favorite"] = news_df["like_count"].mean()
-    features_df["label"] = label # 0 for fake news, 1 for real news
+    if not query:
+        features_df["label"] = label # 0 for fake news, 1 for real news
+        
     features_df["news lifetime"] = (news_df["date"].max() \
                                     - news_df["date"].min()).dt.seconds
     
@@ -196,5 +198,11 @@ def complete_processing(source, label, posts_name, feature_name, start=None, end
     posts.to_csv("data/" + posts_name, index=False)
     features = get_features(posts, label)
     features.to_csv("data/" + feature_name, index=False)
+    
+    return features
+
+def process_query(query):
+    posts = create_dataset(pd.DataFrame({"title": [query]}))
+    features = get_features(posts, None, True)
     
     return features

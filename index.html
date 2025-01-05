@@ -15,9 +15,11 @@
 
   <script>
     const form = document.getElementById('userForm');
+    const inputBox = document.getElementById('userInput');
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
-      const userInput = document.getElementById('userInput').value;
+      const userInput = inputBox.value;
 
       try {
         const response = await fetch('http://127.0.0.1:5000/receive', {
@@ -28,6 +30,7 @@
 
         if (response.ok) {
           alert('Input sent successfully!');
+          inputBox.value = ''; // Clear the input box
         } else {
           alert('Error sending input.');
         }

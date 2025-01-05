@@ -26,3 +26,4 @@ hyperopt
 # Set up the server
 flask
 flask-cors
+gradio
