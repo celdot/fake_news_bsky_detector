@@ -1,3 +1,8 @@
+pyarrow==18.1.0
+kafka-python
+great-expectations
+confluent-kafka
+
 # Feature store and model registry
 hopsworks
 
