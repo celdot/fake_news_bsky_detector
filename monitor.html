@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitor the Model</title>
+  <style>
+    .navbar {
+      display: flex;
+      background-color: #333;
+      overflow: hidden;
+      padding: 0.5em;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      padding: 0.5em 1em;
+    }
+    .navbar a:hover {
+      background-color: #575757;
+    }
+    body {
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      margin-top: 20px;
+    }
+    img {
+      max-width: 100%;
+      height: auto;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <a href="index.html">Test News</a>
+    <a href="monitor.html">Monitor the Model</a>
+  </div>
+
+  <!-- Monitor the Model Page Content -->
+  <h1>Monitor the Model</h1>
+  <p>The following figures provide insights into the model's performance:</p>
+
+  <h2>Confusion Matrix</h2>
+  <p>This image shows the confusion matrix, which indicates the model's classification performance.</p>
+  <img src="figures/confusion_matrix.png" alt="Confusion Matrix">
+
+  <h2>Feature Importance</h2>
+  <p>This image shows the feature importance, which explains which features were most influential in the model's predictions.</p>
+  <img src="figures/feature_importance.png" alt="Feature Importance">
+</body>
+</html>

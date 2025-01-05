@@ -136,51 +136,71 @@ def calculate_repost_post_counts(group):
     repost_count = type_counts.get("repost", 0)  # Safely get the "repost" count
     post_count = type_counts.get("post", 0)      # Safely get the "post" count
     
-    return pd.Series({"repost_count": repost_count, "post_count": post_count})
+    # Return a DataFrame with the counts and the group key
+    return pd.DataFrame({
+        "repost_count": [repost_count], 
+        "post_count": [post_count]
+    })
 
 def get_features(dataframe, label, query=False):
+    # Group the dataframe by "news_id"
     news_df = dataframe.groupby("news_id")
-    
+
+    # Create an empty DataFrame for features
     features_df = pd.DataFrame()
-    
+
+    # Convert date columns to datetime
     dataframe["date"] = pd.to_datetime(dataframe["date"], format='ISO8601', utc=True)
     dataframe["retweet_date"] = pd.to_datetime(dataframe["retweet_date"], format='ISO8601', utc=True)
-    
-    dataframe["time_difference"] = (dataframe["date"] - dataframe["retweet_date"]).dt.seconds
-    
+
+    # Calculate time difference between a post and its reposts in seconds
+    dataframe["time_difference"] = (dataframe["date"] - dataframe["retweet_date"]).dt.total_seconds()
+
+    # Calculate average followers and follows
     features_df["average followers"] = news_df["follower_count"].mean()
     features_df["average follows"] = news_df["follows_count"].mean()
 
+    # Get the total number of reposts
     features_df["repost total"] = news_df["repost_count"].sum().fillna(0).astype('int64')
-    
-    # Get the total number of posts (unique)
+
+    # Get the total number of unique posts
     features_df["post total"] = news_df["post_cid"].nunique().fillna(0).astype('int64')
-    
+
+    # Calculate repost percentage
     features_df["repost percentage"] = features_df["repost total"] / (features_df["repost total"] + features_df["post total"])
 
+    # Filter for reposts and calculate repost counts per post
     reposts = dataframe[dataframe["type"] == "repost"]
-
     repost_counts = reposts.groupby("post_cid")["repost_count"].sum().reset_index()
     repost_counts.rename(columns={"repost_count": "reposts_per_posts"}, inplace=True)
 
+    # Merge repost counts back into the original dataframe
     repost_counts = dataframe.merge(repost_counts, on="post_cid", how="left")
 
-    features_df["average repost"] = (repost_counts.groupby("news_id")["reposts_per_posts"].sum() / \
-                                (features_df["repost total"] + features_df["post total"])).fillna(0)
-                                                
-    features_df["average favorite"] = news_df["like_count"].mean()
-    if not query:
-        features_df["label"] = label # 0 for fake news, 1 for real news
-        
-    features_df["news lifetime"] = (news_df["date"].max() \
-                                    - news_df["date"].min()).dt.seconds
-    
-    features_df["nb users 10 hours"] = news_df.apply(count_users_within_10_hours).fillna(1).astype('int64')
+    # Calculate average repost per news
+    features_df["average repost"] = (
+        repost_counts.groupby("news_id")["reposts_per_posts"].sum() /
+        (features_df["repost total"] + features_df["post total"])
+    ).fillna(0)
 
+    # Calculate average favorites
+    features_df["average favorite"] = news_df["like_count"].mean()
+
+    # Handle labeling if `query` is not provided
+    if not query:
+        features_df["label"] = label  # 0 for fake news, 1 for real news
+
+    # Calculate news lifetime in seconds, which is the difference between the time of the first post and the last post
+    features_df["news lifetime"] = (news_df["date"].max() - news_df["date"].min()).dt.total_seconds()
+
+    # Count number of users that posted or reposts within the first 10 hours
+    features_df["nb users 10 hours"] = news_df["user_name"].apply(count_users_within_10_hours).fillna(1).astype('int64')
+
+    # Calculate average time difference
     features_df["average time difference"] = news_df["time_difference"].mean().fillna(0)
-    
-    # Step 3: Apply the function to each group
-    counts_df = news_df.apply(calculate_repost_post_counts).reset_index()
+
+    # Apply the function to each group and reset the index
+    counts_df = news_df[["date", "type", "news_id"]].apply(calculate_repost_post_counts).reset_index()
 
     # Step 4: Merge repost and post counts into features_df
     features_df = features_df.merge(counts_df, on="news_id", how="left").fillna(0)
@@ -189,8 +209,9 @@ def get_features(dataframe, label, query=False):
     features_df["retweet percentage 1 hour"] = (
         (features_df["repost_count"] + features_df["post_count"]) /
         (features_df["repost total"] + features_df["post total"])
-        ).fillna(0)
-    
+    ).fillna(0)
+
+    # Drop unnecessary columns
     features_df = features_df.drop(columns=["repost_count", "post_count"])
                                                 
     return features_df
