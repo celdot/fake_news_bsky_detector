@@ -151,9 +151,11 @@ def get_features(dataframe, label, query=False):
     features_df["average followers"] = news_df["follower_count"].mean()
     features_df["average follows"] = news_df["follows_count"].mean()
 
-    features_df["repost total"] = news_df["repost_count"].sum().fillna(0).astype(int)
+    features_df["repost total"] = news_df["repost_count"].sum().fillna(0).astype('int64')
     
-    features_df["post total"] = news_df["type"].value_counts().unstack()["post"].fillna(0).astype(int)
+    # Get the total number of posts (unique)
+    features_df["post total"] = news_df["post_cid"].nunique().fillna(0).astype('int64')
+    
     features_df["repost percentage"] = features_df["repost total"] / (features_df["repost total"] + features_df["post total"])
 
     reposts = dataframe[dataframe["type"] == "repost"]
@@ -173,7 +175,7 @@ def get_features(dataframe, label, query=False):
     features_df["news lifetime"] = (news_df["date"].max() \
                                     - news_df["date"].min()).dt.seconds
     
-    features_df["nb users 10 hours"] = news_df.apply(count_users_within_10_hours).fillna(1).astype(int)
+    features_df["nb users 10 hours"] = news_df.apply(count_users_within_10_hours).fillna(1).astype('int64')
 
     features_df["average time difference"] = news_df["time_difference"].mean().fillna(0)
     

@@ -1,8 +1,9 @@
-import feature_processing_utils as fpu
 import hopsworks
 import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+
+import features_processing_utils as fpu
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +17,10 @@ query_fg = fs.get_or_create_feature_group(
     primary_key=['news_id'],
     online_enabled=True,
 )
-queries_df = query_fg.read()
+try :
+    queries_df = query_fg.read()
+except:
+    queries_df = pd.DataFrame()
 
 @app.route('/receive', methods=['POST'])
 def receive_input():
