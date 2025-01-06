@@ -39,6 +39,7 @@ def receive_input():
     print("finished writing to feature store")
     
     result = inference(user_input)
+    print(f"Result: {result}")
 
     return jsonify({"status": "success", "result": result}), 200 # Send result back as JSON
 

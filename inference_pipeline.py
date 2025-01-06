@@ -1,2 +1,2 @@
 def inference(input):
-    return "The news is fake"
+    return(f"The news {input}is fake")
