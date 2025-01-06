@@ -31,15 +31,21 @@
 <body>
   <!-- Navigation Bar -->
   <div class="navbar">
+
     <a href="index.html">Test News</a>
     <a href="monitor.html">Monitor the Model</a>
   </div>
+
   <h1>Send Input to Python Server</h1>
   <form id="userForm">
     <label for="userInput">Enter something:</label>
     <input type="text" id="userInput" name="userInput" required>
     <button type="submit">Submit</button>
   </form>
+
+  <h2>Result:</h2>
+  <p id="result">Your result will appear here.</p>
+  
   <script>
     const form = document.getElementById('userForm');
     form.addEventListener('submit', async (event) => {
