@@ -15,7 +15,7 @@ This project implements a pipeline for fake news detection, using the propagatio
 
 The project is divided into the following components:
 
-[Project structure](/img/fake_news_project_structure.png)
+![Project structure](/img/fake_news_project_structure.png)
 
 ### 1. **Feature Engineering and Data Management**
 - **`features_processing_utils.py`**: Contains utility functions for scraping posts with the Bsky API and processing features about the propagation graph of the posts and their reposts in Bsky.
