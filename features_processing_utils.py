@@ -136,11 +136,8 @@ def calculate_repost_post_counts(group):
     repost_count = type_counts.get("repost", 0)  # Safely get the "repost" count
     post_count = type_counts.get("post", 0)      # Safely get the "post" count
     
-    # Return a DataFrame with the counts and the group key
-    return pd.DataFrame({
-        "repost_count": [repost_count], 
-        "post_count": [post_count]
-    })
+    # Return a Series with the counts and the group key
+    return pd.Series({"repost_count": repost_count, "post_count": post_count})
 
 def get_features(dataframe, label, query=False):
     # Group the dataframe by "news_id"
@@ -188,7 +185,7 @@ def get_features(dataframe, label, query=False):
 
     # Handle labeling if `query` is not provided
     if not query:
-        features_df["label"] = label  # 0 for fake news, 1 for real news
+        features_df["label"] = label  # 1 for fake news, 0 for real news
 
     # Calculate news lifetime in seconds, which is the difference between the time of the first post and the last post
     features_df["news lifetime"] = (news_df["date"].max() - news_df["date"].min()).dt.total_seconds()
@@ -200,7 +197,8 @@ def get_features(dataframe, label, query=False):
     features_df["average time difference"] = news_df["time_difference"].mean().fillna(0)
 
     # Apply the function to each group and reset the index
-    counts_df = news_df[["date", "type", "news_id"]].apply(calculate_repost_post_counts).reset_index()
+    counts_df = dataframe.groupby("news_id").apply(calculate_repost_post_counts)
+    print(counts_df)
 
     # Step 4: Merge repost and post counts into features_df
     features_df = features_df.merge(counts_df, on="news_id", how="left").fillna(0)

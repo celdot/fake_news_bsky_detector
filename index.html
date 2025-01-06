@@ -43,28 +43,33 @@
     <button type="submit">Submit</button>
   </form>
 
+  <h2>Result:</h2>
+  <p id="result">Your result will appear here.</p>
+
   <script>
     const form = document.getElementById('userForm');
-    const inputBox = document.getElementById('userInput');
+    const resultParagraph = document.getElementById('result');
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
-      const userInput = inputBox.value;
+      const userInput = document.getElementById('userInput').value;
 
       try {
-        const response = await fetch('http://127.0.0.1:5000/receive', {
+        const response = await fetch('http://127.0.0.1:5000/process', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ input: userInput }),
         });
 
         if (response.ok) {
-          alert('Input sent successfully!');
           inputBox.value = ''; // Clear the input box
+          const data = await response.json();
+          resultParagraph.textContent = data.result; // Display the result
         } else {
-          alert('Error sending input.');
+          resultParagraph.textContent = 'Error processing input.';
         }
       } catch (error) {
+        resultParagraph.textContent = 'Error connecting to the server.';
         console.error('Error:', error);
       }
     });

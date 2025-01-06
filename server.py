@@ -2,6 +2,7 @@ import hopsworks
 import pandas as pd
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from inference_utils import process_input
 
 import features_processing_utils as fpu
 
@@ -34,8 +35,10 @@ def receive_input():
     queries_df = pd.concat([queries_df, query_features], ignore_index=True)
 
     query_fg.insert(queries_df, write_options={"wait_for_job": True})
+    
+    result = process_input(user_input)
 
-    return jsonify({"status": "success", "received": user_input}), 200
+    return jsonify({'result': result}) # Send result back as JSON
 
 if __name__ == '__main__':
     app.run(debug=True)
