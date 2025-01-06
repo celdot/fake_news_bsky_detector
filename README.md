@@ -1,6 +1,6 @@
-# fake_news_bsky_detector
+# Blye Sky Fake News Detector
 
-Write a report about you have done, the dataset, your method, your results, and how to run the code.
+![Hopsworks Logo](./img/logo.png)
 
 ### Project description
 
@@ -15,7 +15,7 @@ This project implements a pipeline for fake news detection, using the propagatio
 
 The project is divided into the following components:
 
-![Hopsworks Logo](./img/project_structure.png)
+(/img/fake_news_project_structure.png)
 
 ### 1. **Feature Engineering and Data Management**
 - **`features_processing_utils.py`**: Contains utility functions for scraping posts with the Bsky API and processing features about the propagation graph of the posts and their reposts in Bsky.

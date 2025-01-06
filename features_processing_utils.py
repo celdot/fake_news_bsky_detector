@@ -154,8 +154,6 @@ def get_features(dataframe, label, query=False):
     # Create an empty DataFrame for features
     features_df = pd.DataFrame()
     features_df["news_id"] = news_df.groups.keys()
-    
-    print(features_df)
 
     # Convert date columns to datetime
     dataframe["date"] = pd.to_datetime(dataframe["date"], format='ISO8601', utc=True)
@@ -164,10 +162,20 @@ def get_features(dataframe, label, query=False):
     # Calculate time difference between a post and its reposts in seconds
     dataframe["time_difference"] = (dataframe["date"] - dataframe["retweet_date"]).dt.total_seconds()
 
-    # Calculate average followers and follows
-    features_df["average followers"] = news_df["follower_count"].mean().reset_index()
-    features_df["average follows"] = news_df["follows_count"].mean().reset_index()
+    # Calculate the mean of follower_count for each group and merge with features_df
+    average_followers = news_df["follower_count"].mean().reset_index()
+    features_df = features_df.merge(average_followers, on="news_id", how="left")
 
+    # Similarly, calculate the mean of follows_count for each group and merge
+    average_follows = news_df["follows_count"].mean().reset_index()
+    features_df = features_df.merge(average_follows, on="news_id", how="left")
+
+    # Rename columns for clarity
+    features_df.rename(columns={"follower_count": "average followers", 
+                                "follows_count": "average follows"}, inplace=True)
+    
+    print(features_df)
+    
     # Get the total number of reposts
     features_df["repost total"] = news_df["repost_count"].sum().fillna(0).astype('int64')
 
