@@ -24,7 +24,7 @@ def get_feed(username, limit=100):
     return data
 
 def search_posts(query, limit=100):
-    response = requests.get(f"https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?query={query}&limit={limit}")
+    response = requests.get(f"https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts?q={query}&limit={limit}")
     data = response.json()
     return data
 
@@ -56,6 +56,7 @@ def add_posts(news, limit=100):
 
     for query in tqdm(news["title"]):
         posts = search_posts(query, limit)
+        print(posts)
         try:
             posts_list = posts["posts"]
         except KeyError:
@@ -137,14 +138,17 @@ def calculate_repost_post_counts(group):
     post_count = type_counts.get("post", 0)      # Safely get the "post" count
     
     # Return a Series with the counts and the group key
-    return pd.Series({"repost_count": repost_count, "post_count": post_count})
+    return pd.Series({"repost_count_1hour": repost_count, "post_count_1hour": post_count})
 
 def get_features(dataframe, label, query=False):
+    dataframe["repost_count_1hour"] = 0
+    dataframe["post_count_1hour"] = 0
     # Group the dataframe by "news_id"
     news_df = dataframe.groupby("news_id")
 
     # Create an empty DataFrame for features
     features_df = pd.DataFrame()
+    features_df["news_id"] = news_df["news_id"]
 
     # Convert date columns to datetime
     dataframe["date"] = pd.to_datetime(dataframe["date"], format='ISO8601', utc=True)
@@ -197,20 +201,20 @@ def get_features(dataframe, label, query=False):
     features_df["average time difference"] = news_df["time_difference"].mean().fillna(0)
 
     # Apply the function to each group and reset the index
-    counts_df = dataframe.groupby("news_id").apply(calculate_repost_post_counts)
-    print(counts_df)
+    counts_df = news_df.apply(calculate_repost_post_counts).reset_index(drop=True)
 
     # Step 4: Merge repost and post counts into features_df
-    features_df = features_df.merge(counts_df, on="news_id", how="left").fillna(0)
+    features_df = pd.concat([features_df, counts_df[["repost_count_1hour", "post_count_1hour"]]], axis=1)
+    print("features_df", features_df.columns)
 
     # Step 5: Calculate retweet percentage for 1 hour
     features_df["retweet percentage 1 hour"] = (
-        (features_df["repost_count"] + features_df["post_count"]) /
+        (features_df["repost_count_1hour"] + features_df["post_count_1hour"]) /
         (features_df["repost total"] + features_df["post total"])
     ).fillna(0)
 
     # Drop unnecessary columns
-    features_df = features_df.drop(columns=["repost_count", "post_count"])
+    features_df = features_df.drop(columns=["repost_count_1hour", "post_count_1hour"])
                                                 
     return features_df
 
