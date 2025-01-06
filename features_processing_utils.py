@@ -148,29 +148,29 @@ def get_features(dataframe, label, query=False):
     dataframe["repost_count_1hour"] = 0
     dataframe["post_count_1hour"] = 0
     
-    # Group the dataframe by "news_id"
+    ### Group the dataframe by "news_id"
     news_df = dataframe.groupby("news_id")
 
-    # Create an empty DataFrame for features
+    ### Create an empty DataFrame for features
     features_df = pd.DataFrame()
     features_df["news_id"] = news_df.groups.keys()
 
-    # Convert date columns to datetime
+    ### Convert date columns to datetime
     dataframe["date"] = pd.to_datetime(dataframe["date"], format='ISO8601', utc=True)
     dataframe["retweet_date"] = pd.to_datetime(dataframe["retweet_date"], format='ISO8601', utc=True)
 
-    # Calculate time difference between a post and its reposts in seconds
+    ### Calculate time difference between a post and its reposts in seconds
     dataframe["time_difference"] = (dataframe["date"] - dataframe["retweet_date"]).dt.total_seconds()
 
-    # Calculate the mean of follower_count for each group and merge with features_df
+    ### Calculate the average number of followers for usres in each group of news and merge with features_df
     average_followers = news_df["follower_count"].mean().reset_index()
     features_df = features_df.merge(average_followers, on="news_id", how="left")
 
-    # Similarly, calculate the mean of follows_count for each group and merge
+    ### Calculate the average number of follows for users in in each group and merge with feature_df
     average_follows = news_df["follows_count"].mean().reset_index()
     features_df = features_df.merge(average_follows, on="news_id", how="left")
     
-    # Get the total number of reposts
+    ### Get the total number of reposts
     repost_total = dataframe[["repost_count", "news_id"]].groupby("news_id").sum().fillna(0).reset_index()
     features_df = features_df.merge(repost_total, on="news_id", how="left")
     
@@ -179,15 +179,37 @@ def get_features(dataframe, label, query=False):
                                 "follows_count": "average follows",
                                 "repost_count": "repost total"})
 
-    # Get the total number of unique posts
-    features_df["post total"] = news_df["post_cid"].nunique().fillna(0).astype('int64')
-    
-    print(features_df)
+    ### Get the total number of unique posts
+    post_total = news_df["post_cid"].nunique().fillna(0).astype('int64')
+    features_df = features_df.merge(post_total, on="news_id", how="left")
+    features_df = features_df.rename(columns={"post_cid": "post total"})
 
-    # Calculate repost percentage
+    ### Calculate repost percentage
     features_df["repost percentage"] = features_df["repost total"] / (features_df["repost total"] + features_df["post total"])
     
-    print("Repost percentage: ", features_df["repost total"] / (features_df["repost total"] + features_df["post total"]))
+    ### Calculate average favorites
+    average_favorite = news_df["like_count"].mean()
+    features_df = features_df.merge(average_favorite, on="news_id", how="left")
+    features_df = features_df.rename(columns={"like_count": "average favorite"})
+    
+    ### Calculate news lifetime in seconds, which is the difference between the time of the first post and the last post
+    news_lifetime = (news_df["date"].max() - news_df["date"].min()).dt.total_seconds()
+    features_df = features_df.merge(news_lifetime, on="news_id", how="left")  
+    
+    ### Calculate average time difference
+    average_time_difference = news_df["time_difference"].mean().fillna(0)
+    features_df = features_df.merge(average_time_difference, on="news_id", how="left")
+    
+    # Rename columns for clarity
+    features_df = features_df.rename(columns={"like_count": "average favorite",
+                                              "time_difference": "average time difference",
+                                              "date": "news lifetime"})
+    
+    # Handle labeling if `query` is not provided
+    if not query:
+        features_df["label"] = label  # 1 for fake news, 0 for real news
+        
+    print(features_df)
 
     # Filter for reposts and calculate repost counts per post
     reposts = dataframe[dataframe["type"] == "repost"]
@@ -202,19 +224,6 @@ def get_features(dataframe, label, query=False):
         repost_counts.groupby("news_id")["reposts_per_posts"].sum() /
         (features_df["repost total"] + features_df["post total"])
     ).fillna(0)
-
-    # Calculate average favorites
-    features_df["average favorite"] = news_df["like_count"].mean()
-
-    # Handle labeling if `query` is not provided
-    if not query:
-        features_df["label"] = label  # 1 for fake news, 0 for real news
-
-    # Calculate news lifetime in seconds, which is the difference between the time of the first post and the last post
-    features_df["news lifetime"] = (news_df["date"].max() - news_df["date"].min()).dt.total_seconds()
-    
-    # Calculate average time difference
-    features_df["average time difference"] = news_df["time_difference"].mean().fillna(0)
 
     # Count number of users that posted or reposts within the first 10 hours
     features_df["nb users 10 hours"] = news_df.apply(count_users_within_10_hours).fillna(1).astype('int64')
