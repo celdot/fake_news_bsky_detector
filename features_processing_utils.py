@@ -56,7 +56,6 @@ def add_posts(news, limit=100):
 
     for query in tqdm(news["title"]):
         posts = search_posts(query, limit)
-        print(posts)
         try:
             posts_list = posts["posts"]
         except KeyError:
