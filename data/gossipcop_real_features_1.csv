@@ -1,3 +1,3 @@
-news_id,average followers,average follows,repost total,post total,repost percentage,average repost,average favorite,label,news lifetime,average time difference,nb users 10 hours,retweet percentage 1 hour
-gossipcop-894416,3846.8709677419356,975.7096774193549,32,25,0.5614035087719298,0.0,,1,,,,0.017543859649122806
-gossipcop-930832,1484.3677130044844,568.4484304932736,28410,93,0.9967371855594148,0.0,,1,,,,3.5084026242851626e-05
+news_id,average followers,average follows,repost total,post total,average favorite,news lifetime,average time difference,repost percentage,label,retweet percentage 1 hour,nb users 10 hours,average repost
+gossipcop-894416,3848.3225806451615,975.7096774193549,32,25,20.193548387096776,395008360.589,0.0,0.5614035087719298,1,0.017543859649122806,1,2.6666666666666665
+gossipcop-930832,1486.578475336323,571.609865470852,28814,93,243.1121076233184,2127970.395,0.0,0.9967827861763586,1,3.459369702840143e-05,14,99.24862490054312

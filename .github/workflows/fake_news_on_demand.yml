@@ -3,7 +3,7 @@
   on:
     workflow_dispatch:
     schedule:
-      - cron: '11 14 * * *'
+      - cron: '6 14 * * *'
 
   jobs:
     schedule_pipelines:
@@ -35,19 +35,14 @@
           env:
             HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
           run: |
-            jupyter notebook stop 8888 || true
-            jupyter notebook start --no-browser --port=8888 &
-            jupyter nbconvert --to notebook --execute 2_air_quality_feature_pipeline.ipynb
-            jupyter notebook stop 8888 || true
-            jupyter notebook start --no-browser --port=8888 &
-            jupyter nbconvert --to notebook --execute 4_air_quality_batch_inference.ipynb
+            python on_demand_features_pipeline.py
 
         # Step 5: Commit and push generated files
         - name: Publish updated data to repository
           uses: stefanzweifel/git-auto-commit-action@v5
           with:
-            commit_message: "Air Quality Dashboard published"
+            commit_message: "Fake News Bsky published"
             commit_options: '--no-verify --signoff'
-            file_pattern: 'docs/air-quality/assets/img/*' 
+            file_pattern: 'figures/*' 
             repository: .
             status_options: '--untracked-files=no'
