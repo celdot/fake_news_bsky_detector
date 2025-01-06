@@ -150,6 +150,7 @@ def get_features(dataframe, label, query=False):
     
     # Group the dataframe by "news_id"
     news_df = dataframe.groupby("news_id", as_index=False)
+    print(news_df)
 
     # Create an empty DataFrame for features
     features_df = pd.DataFrame()
@@ -171,13 +172,14 @@ def get_features(dataframe, label, query=False):
     features_df = features_df.merge(average_follows, on="news_id", how="left")
 
     # Rename columns for clarity
-    features_df.rename(columns={"follower_count": "average followers", 
+    features_df.rename(columns={"follower_count": "average followers",
                                 "follows_count": "average follows"}, inplace=True)
     
     print(features_df)
     
     # Get the total number of reposts
-    features_df["repost total"] = news_df["repost_count"].sum().fillna(0).astype('int64')
+    repost_total = news_df["repost_count"].sum().fillna(0)
+    features_df = features_df.merge(repost_total, on="news_id", how="left")
 
     # Get the total number of unique posts
     features_df["post total"] = news_df["post_cid"].nunique().fillna(0).astype('int64')
