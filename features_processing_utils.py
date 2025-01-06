@@ -149,8 +149,7 @@ def get_features(dataframe, label, query=False):
     dataframe["post_count_1hour"] = 0
     
     # Group the dataframe by "news_id"
-    news_df = dataframe.groupby("news_id", as_index=False)
-    print(news_df)
+    news_df = dataframe.groupby("news_id")
 
     # Create an empty DataFrame for features
     features_df = pd.DataFrame()
@@ -170,19 +169,20 @@ def get_features(dataframe, label, query=False):
     # Similarly, calculate the mean of follows_count for each group and merge
     average_follows = news_df["follows_count"].mean().reset_index()
     features_df = features_df.merge(average_follows, on="news_id", how="left")
-
-    # Rename columns for clarity
-    features_df.rename(columns={"follower_count": "average followers",
-                                "follows_count": "average follows"}, inplace=True)
-    
-    print(features_df)
     
     # Get the total number of reposts
-    repost_total = news_df["repost_count"].sum().fillna(0)
+    repost_total = dataframe[["repost_count", "news_id"]].groupby("news_id").sum().fillna(0).reset_index()
     features_df = features_df.merge(repost_total, on="news_id", how="left")
+    
+    # Rename columns for clarity
+    features_df = features_df.rename(columns={"follower_count": "average followers",
+                                "follows_count": "average follows",
+                                "repost_count": "repost total"})
 
     # Get the total number of unique posts
     features_df["post total"] = news_df["post_cid"].nunique().fillna(0).astype('int64')
+    
+    print(features_df)
 
     # Calculate repost percentage
     features_df["repost percentage"] = features_df["repost total"] / (features_df["repost total"] + features_df["post total"])

@@ -1,4 +1,4 @@
-# Blye Sky Fake News Detector
+# Blue Sky Fake News Detector
 
 ![Hopsworks Logo](./img/logo.png)
 
@@ -36,7 +36,7 @@ The pipelines `on_demand_feature_pipeline.py` and `inference_pipeline.py` are ex
 
 ---
 
-## Visualization Dashboard
+## User Interface and Visualization Dashboard
 
 A user interface hosted on GitHub Pages allows the user to put in the name of a news article and view the predictions of the model about the veracity of that article.
 
