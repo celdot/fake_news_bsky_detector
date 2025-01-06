@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send Input to Python Server</title>
+  <title>Test News</title>
   <style>
     /* Basic styling for the navigation bar */
     .navbar {
@@ -34,29 +34,42 @@
     <a href="index.html">Test News</a>
     <a href="monitor.html">Monitor the Model</a>
   </div>
+
+  <!-- Test News Page Content -->
   <h1>Send Input to Python Server</h1>
   <form id="userForm">
     <label for="userInput">Enter something:</label>
     <input type="text" id="userInput" name="userInput" required>
     <button type="submit">Submit</button>
   </form>
+
+  <h2>Result:</h2>
+  <p id="result">Your result will appear here.</p>
+
   <script>
     const form = document.getElementById('userForm');
+    const resultParagraph = document.getElementById('result');
+
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
       const userInput = document.getElementById('userInput').value;
+
       try {
-        const response = await fetch('http://127.0.0.1:5000/receive', {
+        const response = await fetch('http://127.0.0.1:5000/process', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ input: userInput }),
         });
+
         if (response.ok) {
-          alert('Input sent successfully!');
+          inputBox.value = ''; // Clear the input box
+          const data = await response.json();
+          resultParagraph.textContent = data.result; // Display the result
         } else {
-          alert('Error sending input.');
+          resultParagraph.textContent = 'Error processing input.';
         }
       } catch (error) {
+        resultParagraph.textContent = 'Error connecting to the server.';
         console.error('Error:', error);
       }
     });
