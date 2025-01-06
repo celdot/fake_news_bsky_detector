@@ -45,7 +45,7 @@
 
   <h2>Result:</h2>
   <p id="result">Your result will appear here.</p>
-  
+
   <script>
     const form = document.getElementById('userForm');
     form.addEventListener('submit', async (event) => {
@@ -58,6 +58,7 @@
           body: JSON.stringify({ input: userInput }),
         });
         if (response.ok) {
+          inputBox.value = ''; // Clear the input box
           alert('Input sent successfully!');
         } else {
           alert('Error sending input.');

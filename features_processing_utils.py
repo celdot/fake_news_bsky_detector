@@ -159,7 +159,7 @@ def get_features(dataframe, label, query=False):
     ### Convert date columns to datetime
     dataframe["date"] = pd.to_datetime(dataframe["date"], format='ISO8601', utc=True)
     dataframe["retweet_date"] = pd.to_datetime(dataframe["retweet_date"], format='ISO8601', utc=True)
-
+    
     ### Calculate time difference between a post and its reposts in seconds
     dataframe["time_difference"] = (dataframe["date"] - dataframe["retweet_date"]).dt.total_seconds()
 
@@ -185,48 +185,12 @@ def get_features(dataframe, label, query=False):
     features_df = features_df.merge(post_total, on="news_id", how="left")
     features_df = features_df.rename(columns={"post_cid": "post total"})
     
-    ### Calculate average favorites
-    average_favorite = news_df["like_count"].mean()
-    features_df = features_df.merge(average_favorite, on="news_id", how="left")
-    features_df = features_df.rename(columns={"like_count": "average favorite"})
-    
-    ### Calculate news lifetime in seconds, which is the difference between the time of the first post and the last post
-    news_lifetime = (news_df["date"].max() - news_df["date"].min()).dt.total_seconds()
-    features_df = features_df.merge(news_lifetime, on="news_id", how="left")  
-    
-    ### Calculate average time difference
-    average_time_difference = news_df["time_difference"].mean().fillna(0)
-    features_df = features_df.merge(average_time_difference, on="news_id", how="left")
-    
     ### Calculate repost percentage
     features_df["repost percentage"] = features_df["repost total"] / (features_df["repost total"] + features_df["post total"])
-    
-    # Rename columns for clarity
-    features_df = features_df.rename(columns={"like_count": "average favorite",
-                                              "time_difference": "average time difference",
-                                              "date": "news lifetime"})
     
     ### Handle labeling if `query` is not provided
     if not query:
         features_df["label"] = label  # 1 for fake news, 0 for real news
-
-    ### Calculate repost percentage within 1 hour
-    # Apply the function to each group and reset the index
-    counts_df = news_df.apply(calculate_repost_post_counts).reset_index(drop=True)
-
-    # Merge repost and post counts into features_df
-    features_df = pd.concat([features_df, counts_df[["repost_count_1hour", "post_count_1hour"]]], axis=1)
-
-    features_df["retweet percentage 1 hour"] = (
-        (features_df["repost_count_1hour"] + features_df["post_count_1hour"]) /
-        (features_df["repost total"] + features_df["post total"])
-    ).fillna(0)
-    
-    ### Count number of users that posted or reposts within the first 10 hours
-    nb_users_10_hours = news_df.apply(count_users_within_10_hours).fillna(1).astype('int64')
-    nb_users_10_hours.name = "nb_users_10_hours"
-    features_df = features_df.merge(nb_users_10_hours, on="news_id", how="left")
-    features_df = features_df.rename(columns={"nb_users_10_hours": "nb users 10 hours"})
 
     ### Calculate average repost per news
     # Filter for reposts and calculate repost counts per post
@@ -247,6 +211,41 @@ def get_features(dataframe, label, query=False):
     
     features_df = features_df.merge(average_repost, on="news_id", how="left")
     features_df = features_df.rename(columns={0: "average repost"})
+    
+    ### Calculate average favorites
+    average_favorite = news_df["like_count"].mean()
+    features_df = features_df.merge(average_favorite, on="news_id", how="left")
+    
+    ### Calculate news lifetime in seconds, which is the difference between the time of the first post and the last post
+    news_lifetime = (news_df["date"].max() - news_df["date"].min()).dt.total_seconds()
+    features_df = features_df.merge(news_lifetime, on="news_id", how="left")  
+    
+    # Rename columns for clarity
+    features_df = features_df.rename(columns={"like_count": "average favorite",
+                                              "date": "news lifetime"})
+    
+    ### Count number of users that posted or reposts within the first 10 hours
+    nb_users_10_hours = news_df.apply(count_users_within_10_hours).fillna(1).astype('int64')
+    nb_users_10_hours.name = "nb_users_10_hours"
+    features_df = features_df.merge(nb_users_10_hours, on="news_id", how="left")
+    features_df = features_df.rename(columns={"nb_users_10_hours": "nb users 10 hours"})
+    
+     ### Calculate average time difference
+    average_time_difference = news_df["time_difference"].mean().fillna(0)
+    features_df = features_df.merge(average_time_difference, on="news_id", how="left")
+    features_df = features_df.rename(columns={"time_difference": "average time difference"})
+    
+    ### Calculate repost percentage within 1 hour
+    # Apply the function to each group and reset the index
+    counts_df = news_df.apply(calculate_repost_post_counts).reset_index(drop=True)
+
+    # Merge repost and post counts into features_df
+    features_df = pd.concat([features_df, counts_df[["repost_count_1hour", "post_count_1hour"]]], axis=1)
+
+    features_df["retweet percentage 1 hour"] = (
+        (features_df["repost_count_1hour"] + features_df["post_count_1hour"]) /
+        (features_df["repost total"] + features_df["post total"])
+    ).fillna(0)
 
     ### Drop unnecessary columns
     features_df = features_df.drop(columns=["repost_count_1hour", "post_count_1hour"])
