@@ -30,6 +30,7 @@ def receive_input():
     print(f"Received input: {user_input}")
     
     query_features = fpu.process_query(user_input)
+    print("finished scrapping")
     query_features.columns = query_features.columns.str.replace(' ', '_')
     
     queries_df = pd.concat([queries_df, query_features], ignore_index=True)
