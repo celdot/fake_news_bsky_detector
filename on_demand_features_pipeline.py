@@ -9,16 +9,19 @@ import features_processing_utils as fpu
 from inference_pipeline import inference
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
+# CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
+CORS(app, resources={r"/*": {"origins": "*"}})  
 
 @app.route('/receive', methods=['POST'])
 def receive_input():
+    print("POST request received!")
+    
     data = request.get_json()
     user_input = data.get('input', '')
     print(f"Received input: {user_input}")
     
     # Retrieve the API key from the environment variable
-    api_key = os.environ.get('HOPSWORKS_API_KEY')
+    api_key = api_key = os.environ.get("HOPSWORKS_API_KEY", "Not Found")
 
     if api_key:
         # Log in to Hopsworks using the API key
@@ -54,4 +57,5 @@ def receive_input():
     return jsonify({"status": "success", "results": result}), 200 # Send result back as JSON
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    #app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)
