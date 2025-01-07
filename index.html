@@ -60,9 +60,9 @@
           body: JSON.stringify({ input: userInput }),
         });
         if (response.ok) {
-          // document.getElementById('userInput').value = ''; // Clear the input box
           const responseData = await response.json(); // Parse the JSON response
           resultParagraph.textContent = `${responseData.results}`; // Display the result
+          document.getElementById('userInput').value = ''; // Clear the input box
         } else {
           resultParagraph.textContent = 'Error processing input.';
         }
