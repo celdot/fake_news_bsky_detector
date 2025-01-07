@@ -11,6 +11,7 @@ CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
 
 @app.route('/receive', methods=['POST'])
 def receive_input():
+    print(HOPSWORKS_API_KEY[:5] )
     data = request.get_json()
     user_input = data.get('input', '')
     print(f"Received input: {user_input}")

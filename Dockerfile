@@ -23,7 +23,9 @@ EXPOSE 8080
 
 # Define environment variable for Flask
 ENV FLASK_APP=on_demand_features_pipeline.py
-ENV HOPSWORKS_API_KEY: $HOPSWORKS_API_KEY
+
+# Set environment variable for the secret API key (from Cloud Build's injected secret)
+ENV HOPSWORKS_API_KEY=${HOPSWORKS_API_KEY}
 
 # Run the Flask server
 CMD ["python", "on_demand_features_pipeline.py"]
