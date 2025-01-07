@@ -5,6 +5,12 @@
     - "--tag=gcr.io/fake-news-bsky-detection/fake-news-flask-server-image"
     - "--file=./Dockerfile"
     - "."
+    secretEnv: ['HOPSWORKS_API_KEY']
+
+  availableSecrets:
+    secretManager:
+    - versionName: projects/fake-news-bsky-detection/secrets/HOPSWORKS_API_KEY/versions/latest
+      env: 'HOPSWORKS_API_KEY'
     
   images:
   - "gcr.io/fake-news-bsky-detection/fake-news-flask-server-image"

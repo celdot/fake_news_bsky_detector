@@ -1,0 +1,9 @@
+steps:
+- name: python:slim
+  entrypoint: python
+  args: ['main.py']
+  secretEnv: ['HOPSWORKS_API_KEY']
+availableSecrets:
+  secretManager:
+  - versionName: projects/fake-news-bsky-detection/secrets/HOPSWORKS_API_KEY/versions/latest
+    env: 'HOPSWORKS_API_KEY'
