@@ -41,7 +41,7 @@ def receive_input():
     result = inference(user_input)
     print(f"Result: {result}")
 
-    return jsonify({"status": "success", "result": result}), 200 # Send result back as JSON
+    return jsonify({"status": "success", "received": user_input}), 200 # Send result back as JSON
 
 if __name__ == '__main__':
     app.run(debug=True)
