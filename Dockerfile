@@ -19,10 +19,10 @@ RUN apt-get update && apt-get install -y \
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose port 5000 for the Flask app
-EXPOSE 5000
+EXPOSE 8080
 
 # Define environment variable for Flask
-ENV FLASK_APP=server.py
+ENV FLASK_APP=on_demand_features_pipeline.py
 
 # Run the Flask server
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+CMD ["python", "on_demand_features_pipeline.py"]
