@@ -55,6 +55,6 @@ def inference(input):
     predictions_fg.insert(predictions_df, write_options={"wait_for_job": True})
     
     if prediction == 0:
-        return(f"The news {input}is real")
+        return(f"The news {input} is real")
     else:
-        return(f"The news {input}is fake")
+        return(f"The news {input} is fake")
