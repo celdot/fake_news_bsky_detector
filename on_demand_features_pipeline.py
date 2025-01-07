@@ -1,3 +1,5 @@
+import os
+
 import hopsworks
 import pandas as pd
 from flask import Flask, jsonify, request
@@ -11,12 +13,19 @@ CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
 
 @app.route('/receive', methods=['POST'])
 def receive_input():
-    print(HOPSWORKS_API_KEY[:5] )
     data = request.get_json()
     user_input = data.get('input', '')
     print(f"Received input: {user_input}")
     
-    project = hopsworks.login()
+    # Retrieve the API key from the environment variable
+    api_key = os.environ.get('HOPSWORKS_API_KEY')
+
+    if api_key:
+        # Log in to Hopsworks using the API key
+        project = hopsworks.login(api_key_value=api_key)
+        print("Connected to Hopsworks!")
+    else:
+        print("API Key not found!")
     fs = project.get_feature_store()
     query_fg = fs.get_or_create_feature_group(
         name='user_query',
