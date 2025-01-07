@@ -52,15 +52,15 @@
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
-      const userInput = document.getElementById('userInput');
+      const userInput = document.getElementById('userInput').value;
       try {
         const response = await fetch('http://127.0.0.1:5000/receive', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input: userInput.value }),
+          body: JSON.stringify({ input: userInput }),
         });
         if (response.ok) {
-          userInput.value = ''; // Clear the input box
+          document.getElementById('userInput').value = ''; // Clear the input box
           const responseData = await response.json(); // Parse the JSON response
           resultParagraph.textContent = `${responseData.results}`; // Display the result
         } else {
