@@ -59,11 +59,12 @@
         });
         if (response.ok) {
           inputBox.value = ''; // Clear the input box
-          alert('Input sent successfully!');
+          resultParagraph.textContent = "it works"; // Display the result
         } else {
-          alert('Error sending input.');
+          resultParagraph.textContent = 'Error processing input.';
         }
       } catch (error) {
+        resultParagraph.textContent = 'Error processing input.';
         console.error('Error:', error);
       }
     });
