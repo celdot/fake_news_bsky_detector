@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 import requests
 from tqdm import tqdm
@@ -60,7 +62,10 @@ def add_posts(news, limit=100, IsQuery=False):
                 }
     
     for query in tqdm(news["title"]):
-        posts = search_posts(query, limit)
+        try:
+            posts = search_posts(query, limit)
+        except json.JSONDecodeError:
+            pass
         try:
             posts_list = posts["posts"]
         except KeyError:
@@ -104,7 +109,10 @@ def add_reposts(posts_dataset, limit=100):
                 }
     
     for query in tqdm(posts_dataset["post_uri"]):
-        reposts = get_reposts(query, limit)
+        try:
+            reposts = get_reposts(query, limit)
+        except json.JSONDecodeError:
+            pass
         try:
             reposts_list = reposts["repostedBy"]
         except KeyError:
