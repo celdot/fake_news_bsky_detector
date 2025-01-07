@@ -52,7 +52,7 @@
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
-      const userInput = document.getElementById('userInput').value;
+      const userInput = document.getElementById('userInput');
       try {
         const response = await fetch('http://127.0.0.1:5000/receive', {
           method: 'POST',
@@ -60,17 +60,14 @@
           body: JSON.stringify({ input: userInput }),
         });
         if (response.ok) {
-          console.log("it works");
           userInput.value = ''; // Clear the input box
-          console.log("cleared user input");
-          resultParagraph.textContent = "it works"; // Display the result
-          console.log("displayed result");
+          const responseData = await response.json(); // Parse the JSON response
+          resultParagraph.textContent = `${responseData.results}`; // Display the result
         } else {
           resultParagraph.textContent = 'Error processing input.';
         }
       } catch (error) {
         resultParagraph.textContent = 'Error processing input.';
-        console.error('Error:', error);
       }
     });
   </script>
