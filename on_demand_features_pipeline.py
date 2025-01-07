@@ -44,4 +44,4 @@ def receive_input():
     return jsonify({"status": "success", "results": result}), 200 # Send result back as JSON
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080)

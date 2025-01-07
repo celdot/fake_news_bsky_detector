@@ -1,0 +1,10 @@
+  steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+    - build
+    - "--tag=gcr.io/fake-news-bsky-detection/fake-news-flask-server-image"
+    - "--file=./Dockerfile"
+    - "."
+    
+  images:
+  - "gcr.io/fake-news-bsky-detection/fake-news-flask-server-image"
