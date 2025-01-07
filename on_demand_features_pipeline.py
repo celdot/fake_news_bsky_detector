@@ -7,7 +7,7 @@ import features_processing_utils as fpu
 from inference_pipeline import inference
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
 
 @app.route('/receive', methods=['POST'])
 def receive_input():
