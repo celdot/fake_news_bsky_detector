@@ -57,7 +57,7 @@
         const response = await fetch('http://127.0.0.1:5000/receive', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ input: userInput }),
+          body: JSON.stringify({ input: userInput.value }),
         });
         if (response.ok) {
           userInput.value = ''; // Clear the input box
