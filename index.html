@@ -54,7 +54,7 @@
       event.preventDefault(); // Prevent default form submission
       const userInput = document.getElementById('userInput').value;
       try {
-        const response = await fetch('https://celdot.github.io/fake_news_bsky_detector/receive', {
+        const response = await fetch('https://celdot.github.io/fake_news_bsky_detector', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ input: userInput }),
