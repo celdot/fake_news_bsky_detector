@@ -7,9 +7,7 @@ import xgboost as xgb
 from sklearn.ensemble import RandomForestClassifier
 
 
-def inference(input):
-    project = hopsworks.login()
-
+def inference(input, project, fs):
     # Get the model registry
     mr = project.get_model_registry()
     
@@ -27,9 +25,6 @@ def inference(input):
     
     # Load the model from a saved JSON file
     model = joblib.load(os.path.join(saved_model_dir, "model.joblib"))
-    
-    # Get features to predict
-    fs = project.get_feature_store()
     
     user_query_fg = fs.get_feature_group(
                     name="user_query",
