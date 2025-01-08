@@ -57,8 +57,13 @@ def receive_input():
     
     result = inference(user_input)
     print(f"Result: {result}")
+    
+    response = jsonify({"status": "success", "results": result})
+    response.headers.add("Access-Control-Allow-Origin", "https://celdot.github.io")
+    response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
-    return jsonify({"status": "success", "results": result}), 200 # Send result back as JSON
+    return response, 200 # Send result back as JSON
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=8080)

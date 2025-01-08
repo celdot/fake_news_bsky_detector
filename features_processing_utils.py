@@ -270,6 +270,8 @@ def complete_processing(source, label, posts_name, feature_name, start=None, end
 
 def process_query(query):
     posts = create_dataset(pd.DataFrame({"title": [query]}), 100, True)
+    print("finished scraping posts")
     features = get_features(posts, None, True)
+    print("finished getting features")
     
     return features
