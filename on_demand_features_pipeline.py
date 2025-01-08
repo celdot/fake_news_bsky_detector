@@ -22,15 +22,17 @@ def receive_input():
     print(f"Received input: {user_input}")
     
     # Retrieve the API key from the environment variable
-    api_key = os.environ.get("HOPSWORKS_API_KEY", "Not Found")
-    print(api_key[:10])
-
-    if api_key:
-        # Log in to Hopsworks using the API key
-        project = hopsworks.login(api_key_value=api_key)
-        print("Connected to Hopsworks!")
-    else:
+    api_key = os.environ.get("HOPSWORKS_API_KEY")
+    print("api key is", api_key[:10])
+    
+    if not api_key:
         print("API Key not found!")
+        return jsonify({"status": "error", "message": "API Key not found"}), 500
+
+    # Log in to Hopsworks using the API key
+    project = hopsworks.login(api_key_value=api_key)
+    print("Connected to Hopsworks!")
+
     fs = project.get_feature_store()
     query_fg = fs.get_or_create_feature_group(
         name='user_query',

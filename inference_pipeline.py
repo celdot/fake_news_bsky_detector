@@ -1,6 +1,10 @@
+import os
+
 import hopsworks
+import joblib
 import pandas as pd
 import xgboost as xgb
+from sklearn.ensemble import RandomForestClassifier
 
 
 def inference(input):
@@ -12,17 +16,17 @@ def inference(input):
     # Retrieve the model from the model registry
     retrieved_model = mr.get_model(
         name="news_propagation_model",
-        version=9,
+        version=15,
     )
 
     # Download the saved model files to a local directory
     saved_model_dir = retrieved_model.download()
     
     # Initialize the model
-    model = xgb.XGBClassifier()
-
+    model = RandomForestClassifier()
+    
     # Load the model from a saved JSON file
-    model.load_model(saved_model_dir + "/model.json")
+    model = joblib.load(os.path.join(saved_model_dir, "model.joblib"))
     
     # Get features to predict
     fs = project.get_feature_store()
@@ -51,6 +55,7 @@ def inference(input):
     prediction = model.predict(features_to_predict.tail(1))
     new_prediction = pd.DataFrame({"user_query": user_query.tail(1)["news_id"].values[0], "prediction": prediction})
     predictions_df = predictions_df._append(new_prediction, ignore_index=True)
+    predictions_df["prediction"] = predictions_df["prediction"].astype(int)
     
     predictions_fg.insert(predictions_df, write_options={"wait_for_job": True})
     
