@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 import features_processing_utils as fpu
-from inference_pipeline import inference, inference_test
+from inference_pipeline import inference
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
@@ -30,10 +30,34 @@ def receive_input():
         return jsonify({"status": "error", "message": "API Key not found"}), 500
 
     # Log in to Hopsworks using the API key
-    hopsworks.login(api_key_value=api_key)
-    print("Connected to Hopsworks, yay !")
+    project = hopsworks.login(api_key_value=api_key)
+    print("Connected to Hopsworks!")
+
+    fs = project.get_feature_store()
+    query_fg = fs.get_or_create_feature_group(
+        name='user_query',
+        description='Name of news article from user input',
+        version=1,
+        primary_key=['news_id'],
+        online_enabled=True,
+    )
+    try :
+        queries_df = query_fg.read()
+    except:
+        queries_df = pd.DataFrame()
     
-    result = inference_test(user_input)
+    query_features = fpu.process_query(user_input)
+    query_features.columns = query_features.columns.str.replace(' ', '_')
+    
+    print("finished processing query")
+    
+    queries_df = pd.concat([queries_df, query_features], ignore_index=True)
+
+    query_fg.insert(queries_df, write_options={"wait_for_job": True})
+    
+    print("finished writing to feature store")
+    
+    result = inference(user_input)
     print(f"Result: {result}")
     
     response = jsonify({"status": "success", "results": result})
@@ -44,5 +68,5 @@ def receive_input():
     return response, 200 # Send result back as JSON
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
-    # app.run(host='0.0.0.0', port=8080, debug=True)
+    #app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)

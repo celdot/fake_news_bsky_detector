@@ -63,3 +63,7 @@ def inference(input):
         return(f"The news {input} is real")
     else:
         return(f"The news {input} is fake")
+    
+def inference_test(user_input):
+    print("well received")
+    return f"The news {user_input} was well received"

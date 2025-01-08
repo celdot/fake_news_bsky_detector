@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 
 import features_processing_utils as fpu
-from inference_pipeline import inference, inference_test
+from inference_pipeline import inference
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
@@ -30,10 +30,10 @@ def receive_input():
         return jsonify({"status": "error", "message": "API Key not found"}), 500
 
     # Log in to Hopsworks using the API key
-    hopsworks.login(api_key_value=api_key)
+    project = hopsworks.login(api_key_value=api_key)
     print("Connected to Hopsworks, yay !")
     
-    result = inference_test(user_input)
+    result = inference(user_input)
     print(f"Result: {result}")
     
     response = jsonify({"status": "success", "results": result})
@@ -44,5 +44,5 @@ def receive_input():
     return response, 200 # Send result back as JSON
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
-    # app.run(host='0.0.0.0', port=8080, debug=True)
+    #app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=8080, debug=True)
