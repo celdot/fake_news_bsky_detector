@@ -14,3 +14,14 @@
     
   images:
   - "gcr.io/fake-news-bsky-detection/fake-news-flask-server-image"
+
+  spec:
+    template:
+      spec:
+        template:
+          spec:
+        containers:
+        - image: IMAGE
+          resources:
+            limits:
+              memory: 2G

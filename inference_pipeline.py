@@ -45,9 +45,12 @@ def inference(input):
     primary_key=["user_query"],
     )
     
+    print("got feature group")
+    
     try :
         predictions_df = predictions_fg.read()
     except:
+        print("create predictions_df")
         predictions = model.predict(features_to_predict)
         predictions_df = user_query["news_id"].to_frame().rename(columns={"news_id": "user_query"})
         predictions_df["prediction"] = predictions
@@ -56,8 +59,11 @@ def inference(input):
     new_prediction = pd.DataFrame({"user_query": user_query.tail(1)["news_id"].values[0], "prediction": prediction})
     predictions_df = predictions_df._append(new_prediction, ignore_index=True)
     
-    predictions_df["prediction"] = predictions_df["prediction"].astype(int)
+    print("made predictions now")
+    
+    predictions_df["prediction"] = predictions_df["prediction"].astype('int64')
     print("added predictions, now inserting")
+    print(predictions_df.info())
     
     predictions_fg.insert(predictions_df, write_options={"wait_for_job": True})
     
