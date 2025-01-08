@@ -22,7 +22,7 @@ def receive_input():
     print(f"Received input: {user_input}")
     
     # Retrieve the API key from the environment variable
-    api_key = api_key = os.environ.get("HOPSWORKS_API_KEY", "Not Found")
+    api_key = os.environ.get("HOPSWORKS_API_KEY", "Not Found")
 
     if api_key:
         # Log in to Hopsworks using the API key
