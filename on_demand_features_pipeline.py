@@ -31,7 +31,31 @@ def receive_input():
 
     # Log in to Hopsworks using the API key
     project = hopsworks.login(api_key_value=api_key)
-    print("Connected to Hopsworks, yay !")
+    print("Connected to Hopsworks!")
+
+    fs = project.get_feature_store()
+    query_fg = fs.get_or_create_feature_group(
+        name='user_query',
+        description='Name of news article from user input',
+        version=1,
+        primary_key=['news_id'],
+        online_enabled=True,
+    )
+    try :
+        queries_df = query_fg.read()
+    except:
+        queries_df = pd.DataFrame()
+    
+    query_features = fpu.process_query(user_input)
+    query_features.columns = query_features.columns.str.replace(' ', '_')
+    
+    print("finished processing query")
+    
+    queries_df = pd.concat([queries_df, query_features], ignore_index=True)
+
+    query_fg.insert(queries_df, write_options={"wait_for_job": True})
+    
+    print("finished writing to feature store")
     
     result = inference(user_input)
     print(f"Result: {result}")

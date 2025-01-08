@@ -7,6 +7,9 @@ steps:
   - "."
   secretEnv: ['HOPSWORKS_API_KEY']
 
+options:
+  machineType: 'N1_HIGHCPU_8' # 8 vCPUs, 7.2 GB memory
+
 availableSecrets:
   secretManager:
   - versionName: projects/fake-news-bsky-detection/secrets/HOPSWORKS_API_KEY/versions/latest
@@ -14,8 +17,5 @@ availableSecrets:
   
 images:
 - "gcr.io/fake-news-bsky-detection/fake-news-flask-server-image"
-
-options:
-  machineType: "n1-highcpu-8" 
 
 
