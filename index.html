@@ -93,9 +93,7 @@
     }
   </style>
 </head>
-
 </body>
-
   <h1>Fake News Detector in Blue Sky</h1>
   
   <!-- Navigation Bar -->
@@ -125,8 +123,8 @@
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
       resultParagraph.textContent = `Please wait a few minutes. The prediction is taking a bit of time.`; // Display the result
-      userInputField.value = ""; // Clear the input field
       await sendInput();
+      userInputField.value = ""; // Clear the input field
     });
   
     // Handle Enter keypress in the input field
@@ -134,8 +132,8 @@
       if (event.key === 'Enter') {
         event.preventDefault(); // Prevent default Enter behavior (e.g., form submission)
         resultParagraph.textContent = `Please wait a few minutes. The prediction is taking a bit of time`; // Display the result
-        userInputField.value = ""; // Clear the input field
         await sendInput();
+        userInputField.value = ""; // Clear the input field
       }
     });
   
@@ -160,6 +158,5 @@
       }
     }
   </script>
-  
 </body>
 </html>
