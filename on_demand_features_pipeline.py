@@ -9,9 +9,9 @@ import features_processing_utils as fpu
 from inference_pipeline import inference
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "https://celdot.github.io"}})
+CORS(app, resources={r"/*": {"origins": ["https://fake-news-flask-server-image-949207919441.europe-west2.run.app", "https://celdot.github.io"]}})
 
-# CORS(app, resources={r"/*": {"origins": "*"}})
+#CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/receive', methods=['POST'])
 def receive_input():
@@ -60,7 +60,8 @@ def receive_input():
     print(f"Result: {result}")
     
     response = jsonify({"status": "success", "results": result})
-    response.headers.add("Access-Control-Allow-Origin", "https://celdot.github.io")
+    response.headers.add("Access-Control-Allow-Origin", ["https://fake-news-flask-server-image-949207919441.europe-west2.run.app:8080", "https://celdot.github.io"])
+    # response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
     response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
 
