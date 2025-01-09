@@ -229,7 +229,7 @@ def calculate_repost_post_counts(news_df):
     repost_post_counts = news_df.apply(lambda group: {
         "repost_count_1hour": group["retweet_date"].between(group["date"], group["date"] + pd.Timedelta(hours=1)).sum(),
         "post_count_1hour": group["date"].between(group["date"], group["date"] + pd.Timedelta(hours=1)).sum()
-    }, axis=1)
+    })
     return pd.DataFrame(repost_post_counts.tolist())
 
 def get_features(dataframe, label, query=False):
@@ -254,7 +254,8 @@ def get_features(dataframe, label, query=False):
     features_df = pd.concat([features_df, counts_df[["repost_count_1hour", "post_count_1hour"]]], axis=1)
     features_df["retweet percentage 1 hour"] = (
         (features_df["repost_count_1hour"] + features_df["post_count_1hour"]) /
-        (features_df["repost total"] + features_df["post total"])
+        (features_df["repost total"] + features_df["post total"]
+        )
     ).fillna(0)
     features_df = features_df.drop(columns=["repost_count_1hour", "post_count_1hour"])
     
