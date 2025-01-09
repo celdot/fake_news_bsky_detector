@@ -9,7 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 def inference(input):
     # Get the model registry
-    project = hopsworks.project()
+    project = hopsworks.login()
     fs = project.feature_store()
     mr = project.get_model_registry()
     
