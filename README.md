@@ -1,6 +1,6 @@
 # Blue Sky Fake News Detector
 
-![Hopsworks Logo](./img/logo.png) ![Google Cloud Logo](./img/google_cloud.png)
+![Hopsworks Logo](./img/logo.png) ![Google Cloud Logo](./img/google_cloud.webp)
 
 ### Project description
 
@@ -27,12 +27,6 @@ The project is divided into the following components:
 
 ### 3. **Batch Inference**
 - **`inference_pipeline.py`**: Runs on-demand to make the prediction whether a piece of news is fake or not, before comparing it to the data in Politifacts and Gossicop.
-
----
-
-## Automation with GitHub Actions
-
-The pipelines `on_demand_feature_pipeline.py` and `inference_pipeline.py` are executed on-demand through a GitHub Actions workflow defined in `.github/workflows/fake_news_detection.yml`.
 
 ---
 
