@@ -56,7 +56,7 @@ def receive_input():
     
     print("finished writing to feature store")
     
-    result = inference(user_input, project, fs)
+    result = inference(user_input)
     print(f"Result: {result}")
     
     response = jsonify({"status": "success", "results": result})

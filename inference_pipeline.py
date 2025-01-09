@@ -7,8 +7,10 @@ import xgboost as xgb
 from sklearn.ensemble import RandomForestClassifier
 
 
-def inference(input, project, fs):
+def inference(input):
     # Get the model registry
+    project = hopsworks.project()
+    fs = project.feature_store()
     mr = project.get_model_registry()
     
     # Retrieve the model from the model registry
