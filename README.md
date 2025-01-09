@@ -1,6 +1,6 @@
 # Blue Sky Fake News Detector
 
-![Hopsworks Logo](./img/logo.png) ![Google Cloud Logo](./img/google_cloud.png.png)
+![Hopsworks Logo](./img/logo.png) ![Google Cloud Logo](./img/google_cloud.png)
 
 ### Project description
 
