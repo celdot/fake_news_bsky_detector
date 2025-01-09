@@ -113,7 +113,6 @@
       <button type="submit">Submit</button>
     </form>
 
-    <h2>Result:</h2>
     <p id="result">Your result will appear here.</p>
   </div>
 
@@ -125,6 +124,8 @@
     // Handle form submission
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
+      resultParagraph.textContent = `Please wait a few minutes. The prediction is taking a bit of time.`; // Display the result
+      userInputField.value = ""; // Clear the input field
       await sendInput();
     });
   
@@ -132,6 +133,8 @@
     userInputField.addEventListener('keydown', async (event) => {
       if (event.key === 'Enter') {
         event.preventDefault(); // Prevent default Enter behavior (e.g., form submission)
+        resultParagraph.textContent = `Please wait a few minutes. The prediction is taking a bit of time`; // Display the result
+        userInputField.value = ""; // Clear the input field
         await sendInput();
       }
     });
