@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,6 +94,8 @@
   </style>
 </head>
 
+</body>
+
   <h1>Fake News Detector in Blue Sky</h1>
   
   <!-- Navigation Bar -->
@@ -117,10 +120,25 @@
   <script>
     const form = document.getElementById('userForm');
     const resultParagraph = document.getElementById('result'); // Define the result paragraph
-
+    const userInputField = document.getElementById('userInput');
+  
+    // Handle form submission
     form.addEventListener('submit', async (event) => {
       event.preventDefault(); // Prevent default form submission
-      const userInput = document.getElementById('userInput').value;
+      await sendInput();
+    });
+  
+    // Handle Enter keypress in the input field
+    userInputField.addEventListener('keydown', async (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // Prevent default Enter behavior (e.g., form submission)
+        await sendInput();
+      }
+    });
+  
+    // Function to send input to the server
+    async function sendInput() {
+      const userInput = userInputField.value;
       try {
         const response = await fetch('https://fake-news-flask-server-image-949207919441.europe-west2.run.app/receive', {
           method: 'POST',
@@ -130,14 +148,15 @@
         if (response.ok) {
           const responseData = await response.json(); // Parse the JSON response
           resultParagraph.textContent = `${responseData.results}`; // Display the result
-          document.getElementById('userInput').value = ""; // Clear the input field
+          userInputField.value = ""; // Clear the input field
         } else {
           resultParagraph.textContent = 'Error processing input.';
         }
       } catch (error) {
         resultParagraph.textContent = 'Error processing input.';
       }
-    });
+    }
   </script>
+  
 </body>
 </html>
