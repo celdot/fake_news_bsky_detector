@@ -1,23 +1,15 @@
 import os
 
-# import hopsworks
 import joblib
-import pandas as pd
-import xgboost as xgb
-from sklearn.ensemble import RandomForestClassifier
 
 
 def inference(input, project, fs):
-    # Get the model registry
-    # project = hopsworks.login()
-    # fs = project.get_feature_store()
-    
     mr = project.get_model_registry()
     
     # Retrieve the model from the model registry
     retrieved_model = mr.get_model(
         name="news_propagation_model",
-        version=15,
+        version=16,
     )
 
     # Download the saved model files to a local directory
@@ -41,6 +33,6 @@ def inference(input, project, fs):
     prediction = model.predict(features_to_predict.tail(1))
     
     if prediction == 0:
-        return(f"The news {input} is real")
+        return(f"The news: {input} is real.")
     else:
-        return(f"The news {input} is fake")
+        return(f"The news: {input} is fake.")

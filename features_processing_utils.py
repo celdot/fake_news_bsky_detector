@@ -84,7 +84,7 @@ def add_posts(news, limit=100, IsQuery=False):
                 pass
 
     if no_posts_found and IsQuery:
-        return "Sorry, no posts concerning your news were found"
+        return "Sorry, no posts concerning your news were found."
 
     dataframe = pd.DataFrame(
         dataset,
