@@ -13,9 +13,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       background-color: #f4f4f9;
-      min-height: 0;
+      min-height: 100vh;
     }
 
     h1 {
@@ -36,12 +35,12 @@
     }
 
     .navbar {
+      margin-top: 80px; /* Push the navbar down to avoid overlapping the h1 */
       display: flex;
       justify-content: center;
       background-color: #333;
       width: 100%;
       padding: 0.5em 0;
-      margin-bottom: 20px;
     }
 
     .navbar a {
