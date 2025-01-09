@@ -49,6 +49,14 @@ def receive_input():
         queries_df = pd.DataFrame()
     
     query_features = fpu.process_query(user_input)
+    if isinstance(query_features, str):  # Check if error message was returned
+        response = jsonify({"status": "success", "results": query_features})
+        
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        
+        return response, 200
     query_features.columns = query_features.columns.str.replace(' ', '_')
     
     print("finished processing query")
