@@ -187,6 +187,7 @@ def get_features(dataframe, label, query=False):
     features_df = features_df.rename(columns={"follower_count": "average followers",
                                 "follows_count": "average follows",
                                 "repost_count": "repost total"})
+    features_df["repost total"] = features_df["repost total"].astype('int64')
 
     ### Get the total number of unique posts
     post_total = news_df["post_cid"].nunique().fillna(0).astype('int64')
