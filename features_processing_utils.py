@@ -48,35 +48,59 @@ def get_post_info(dataset, post, news, query, IsQuery=False):
     return dataset
 
 def add_posts(news, limit=100, IsQuery=False):
-    
-    dataset = {"post_uri": [],
-                "post_cid": [],
-                "type": "post",
-                "date": [],
-                "news_id": [],
-                "like_count": [],
-                "repost_count": [],
-                "user_name": [],
-                "follower_count": [],
-                "follows_count": [],
-                }
-    
+    dataset = {
+        "post_uri": [],
+        "post_cid": [],
+        "type": "post",
+        "date": [],
+        "news_id": [],
+        "like_count": [],
+        "repost_count": [],
+        "user_name": [],
+        "follower_count": [],
+        "follows_count": [],
+    }
+
+    no_posts_found = True  # Flag to track if any posts are found
+
     for query in tqdm(news["title"]):
         try:
             posts = search_posts(query, limit)
         except json.JSONDecodeError:
-            pass
+            continue
+
         try:
             posts_list = posts["posts"]
         except KeyError:
             posts_list = []
+
+        if posts_list:
+            no_posts_found = False
+
         for post in posts_list:
             try:
                 dataset = get_post_info(dataset, post, news, query, IsQuery)
-            except KeyError: 
+            except KeyError:
                 pass
-                    
-    dataframe = pd.DataFrame(dataset, columns=["post_uri", "post_cid", "type", "date", "news_id", "like_count", "repost_count", "user_name", "follower_count", "follows_count"])
+
+    if no_posts_found and IsQuery:
+        return "Sorry, no posts concerning your news were found"
+
+    dataframe = pd.DataFrame(
+        dataset,
+        columns=[
+            "post_uri",
+            "post_cid",
+            "type",
+            "date",
+            "news_id",
+            "like_count",
+            "repost_count",
+            "user_name",
+            "follower_count",
+            "follows_count",
+        ],
+    )
 
     return dataframe
 
@@ -129,8 +153,10 @@ def add_reposts(posts_dataset, limit=100):
 
 def create_dataset(news, limit=100, IsQuery=False):
     posts_dataset = add_posts(news, limit, IsQuery)
+    if isinstance(posts_dataset, str):  # Check if error message was returned
+        return posts_dataset
+
     reposts_dataset = add_reposts(posts_dataset, limit)
-    
     return pd.concat([posts_dataset, reposts_dataset])
 
 def count_users_within_10_hours(group):
@@ -247,8 +273,11 @@ def complete_processing(source, label, posts_name, feature_name, start=None, end
 
 def process_query(query):
     posts = create_dataset(pd.DataFrame({"title": [query]}), 100, True)
+    if isinstance(posts, str):  # Check if error message was returned
+        return posts
+
     print("finished scraping posts")
     features = get_features(posts, None, True)
     print("finished getting features")
-    
+
     return features
