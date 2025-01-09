@@ -1,6 +1,6 @@
 # Blue Sky Fake News Detector
 
-<img src="./img/logo.png" alt="Hopsworks Logo" width="200"> <img src="./img/google_cloud.webp" alt="Google Cloud Logo" width="200">
+<img src="./img/logo_hopsworks.png" alt="Hopsworks Logo" width="200"> <img src="./img/google_cloud.webp" alt="Google Cloud Logo" width="200">
 
 ### Project description
 
