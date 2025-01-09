@@ -1,16 +1,17 @@
 import os
 
-import hopsworks
+# import hopsworks
 import joblib
 import pandas as pd
 import xgboost as xgb
 from sklearn.ensemble import RandomForestClassifier
 
 
-def inference(input):
+def inference(input, project, fs):
     # Get the model registry
-    project = hopsworks.login()
-    fs = project.feature_store()
+    # project = hopsworks.login()
+    # fs = project.get_feature_store()
+    
     mr = project.get_model_registry()
     
     # Retrieve the model from the model registry
@@ -25,9 +26,15 @@ def inference(input):
     # Load the model from a saved JSON file
     model = joblib.load(os.path.join(saved_model_dir, "model.joblib"))
     
-    user_query_fg = fs.get_feature_group(
-                    name="user_query",
-                    version=1)
+    user_query_fg = fs.get_or_create_feature_group(
+        name='user_query',
+        description='Name of news article from user input',
+        version=1,
+        primary_key=['news_id'],
+        online_enabled=True,
+    )
+    
+    print("got feature group")
     
     features_to_predict = user_query_fg.select_except(["news_id"]).read()
         

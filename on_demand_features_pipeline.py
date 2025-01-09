@@ -40,6 +40,9 @@ def receive_input():
         primary_key=['news_id'],
         online_enabled=True,
     )
+    
+    print("got feature group before processing data")
+    
     try :
         queries_df = query_fg.read()
     except:
@@ -56,7 +59,7 @@ def receive_input():
     
     print("finished writing to feature store")
     
-    result = inference(user_input)
+    result = inference(user_input, project, fs)
     print(f"Result: {result}")
     
     response = jsonify({"status": "success", "results": result})
