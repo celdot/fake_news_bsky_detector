@@ -60,7 +60,7 @@ The assets for these visualizations are stored in the respective directories:
       gcloud builds submit --config ./cloudbuild.yaml .
    - Deploy the Container:
       ```bash 
-      gcloud run deploy fake-news-flask-server-image --image gcr.io/fake-news-bsky-detection/fake-news-flask-server-image --platform managed --region europe-west2 --allow-unauthenticated --update-env-vars HOPSWORKS_API_KEY=[HOPSWORKS_API_KEY]
+      gcloud run deploy fake-news-flask-server-image --image gcr.io/[GCLOUD-PROJECT-ID]/fake-news-flask-server-image --platform managed --region europe-west2 --allow-unauthenticated --update-env-vars HOPSWORKS_API_KEY=[HOPSWORKS_API_KEY]
   
 3. **View Results**:
    - Visit the [Github Pages](https://celdot.github.io/fake_news_bsky_detector/) site to input a news article, view the predictions, and monitor the model.
