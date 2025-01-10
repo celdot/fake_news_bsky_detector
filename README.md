@@ -4,7 +4,8 @@
 
 ### Project description
 
-This project implements a pipeline for fake news detection, using the propagation behaviour of the real and fake news in social medias like Twitter. The project leverages Hopsworks for feature management and model storage, GitHub Actions for automation, and GitHub Pages for visualizationa and user interface. The social media Blue Sky is used to retrieve posts about a specific news, with its API.
+This project implements a pipeline for fake news detection, using the propagation behaviour of the real and fake news in Twitter like social medias The project leverages Hopsworks for feature management and model storage, Google Cloud for deployement, and GitHub Pages for visualizationa and user interface. 
+The social media Blue Sky is used to retrieve posts about a specific news, with its API.
 
  The project implements the paper [Fake News Detection on Twitter Using Propagation
  Structures](https://link.springer.com/chapter/10.1007/978-3-030-61841-4_10) from Marion Meyers(B), Gerhard Weiss, and Gerasimos Spanakis, with the social media Blue Sky as the source of the posts, instead of Twitter.
